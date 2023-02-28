@@ -1,0 +1,16 @@
+---
+
+- hosts: hv6.wsdc1.coffeesprout.cloud
+  roles:
+  - role: coffeesprout.proxmox-container
+    container_name: test
+    container_hostname: test.example.com
+    container_ostemplate: "almalinux-9-useful_20221108_amd64.tar.gz"
+    container_password: "asdf1234"
+    container_description: "test"
+    container_proxmox_node: hv6
+    container_net_interfaces:
+    - id: 0
+      ip: 'dhcp'
+      bridge: 'vmbr0'
+

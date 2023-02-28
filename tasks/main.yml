@@ -1,0 +1,35 @@
+---
+# tasks file for coffeesprout.proxmox-container
+
+- name: optionally download required containers
+  community.general.proxmox_template:
+      api_user: "{{ proxmox_api_user | default('root@pam') }}"
+      api_password: "{{ proxmox_api_password | default(lookup('env', 'PROXMOX_PASSWORD')) }}"
+      api_host: "{{ proxmox_api_host }}"
+      node: "{{ proxmox_node | default(omit) }}"
+      state: present
+      content_type: vztmpl
+      template: "{{ container_ostemplate }}"
+      storage: "{{ proxmox_template_storage }}"
+      validate_certs: False
+  when: "{{ proxmox_download_template }}"
+
+- name: creating container
+  community.general.proxmox:
+      api_user: "{{ proxmox_api_user | default('root@pam') }}"
+      api_password: "{{ proxmox_api_password | default(lookup('env', 'PROXMOX_PASSWORD')) }}"
+      api_host: "{{ proxmox_api_host }}"
+      cores: "{{ container_cores | default(omit) }}"
+      node: "{{ container_proxmox_node | default(omit) }}"
+      hostname: "{{ container_hostname }}"
+      memory: "{{ container_memory | default(omit) }}"
+      netif: >-
+        {   {%- for item in container_net_interfaces -%}
+            "net{{ item.id }}":"name={% if item.name is defined %}{{ item.name }}{% else %}eth0{% endif %}{% if item.hwaddr is defined %},hwaddr={{ item.hwaddr }}{% endif %},bridge={{ item.bridge }},{% if (item.firewall is defined and item.firewall) %}firewall=1,{% endif %}{% if item.rate_limit is defined %}rate={{ item.rate_limit }}{% endif %}{% if item.vlan_tag is defined %},tag={{ item.vlan_tag }}{% endif %}{% if item.ip is defined %}ip={{ item.ip }}{% endif %}{% if item.ip6 is defined %},ip6={{ item.ip6 }}{% endif %}{% if item.gw is defined %},gw={{ item.gw }}{% endif %}{% if item.gw6 is defined %},gw6={{ item.gw6 }}{% endif %}",
+            {%- endfor -%}  }
+      ostemplate: "images:vztmpl/{{ container_ostemplate }}"
+      password: "{{ container_password }}"
+      storage: "{{ container_storage | default('local-zfs') }}"
+      state: present
+      validate_certs: False
+

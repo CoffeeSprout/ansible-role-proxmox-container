@@ -1,0 +1,17 @@
+---
+# defaults file for coffeesprout.proxmox-container
+proxmox_api_user: root@pam
+proxmox_api_token_id: ansible
+
+proxmox_api_host: "{{ inventory_hostname }}"
+
+proxmox_download_template: False
+
+container_net_interfaces: []
+#- name: example
+#  hostname: container.example.com
+#  ostemplate: "local:rockylinux-8-default_20210929_amd64.tar.xz"
+#
+#
+#
+#
