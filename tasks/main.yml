@@ -29,7 +29,9 @@
             {%- endfor -%}  }
       ostemplate: "images:vztmpl/{{ container_ostemplate }}"
       password: "{{ container_password }}"
+      pool: "{{ container_pool | default(omit) }}"
       storage: "{{ container_storage | default('local-zfs') }}"
       state: present
+      unprivileged: "{{ container_unprivileged | default(omit) }}"
       validate_certs: False
 
